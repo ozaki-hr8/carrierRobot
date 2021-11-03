@@ -2,6 +2,8 @@ import cv2
 import numpy as np
 import sys, select, os
 import time
+import serial
+import re
 from dynamixel_sdk import *
 from dynamixel_sdk import Protocol2PacketHandler as P2PH                    # Uses Dynamixel SDK library
 from dynamixel_sdk import PortHandler
@@ -28,7 +30,7 @@ DEVICENAME                  = "/dev/tty.usbserial-AL03ERS9"                # Che
 
 TORQUE_ENABLE               = 1                             # Value for enabling the torque
 TORQUE_DISABLE              = 0                             # Value for disabling the torque
-DXL_MINIMUM_POSITION_VALUE  = 0                       # Dynamixel will rotate between this value
+DXL_MINIMUM_POSITION_VALUE  = 819                       # Dynamixel will rotate between this value
 DXL_MAXIMUM_POSITION_VALUE  = 1023
 
                        # and this value (note that the Dynamixel would not move when the position value is out of movable range. Check e-manual about the range of the Dynamixel you use.)
@@ -39,6 +41,7 @@ COMM_SUCCESS                = 0                             # Communication Succ
 COMM_TX_FAIL                = -1001                         # Communication Tx Failed
 
 flag = 1
+flag2 = 0
 
 
 # Initialize PortHandler Structs
@@ -182,7 +185,30 @@ class DXL():
                 dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 1024)
                 dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 1024)
 
+            elif flag ==4:
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 1223)
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 1223)
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 200)
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 200)
 
+    def moveDXLARM(self):
+        global flag2
+        # Read moving state
+        dxl_moving_state, dxl_comm_result, dxl_error = packetHandler.read1ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED)
+        dxl_moving_state, dxl_comm_result, dxl_error = packetHandler.read1ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED)
+        dxl_moving_state, dxl_comm_result, dxl_error = packetHandler.read1ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED)
+        dxl_moving_state, dxl_comm_result, dxl_error = packetHandler.read1ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED)
+        dxl_moving_state, dxl_comm_result, dxl_error = packetHandler.read1ByteTxRx(portHandler, DXL_ID5, AX_MOVING)
+        # Write goal position
+        if dxl_moving_state == 0:
+            if flag2 == 1:
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID5, AX_GOAL_POSITION, DXL_MINIMUM_POSITION_VALUE)
+                flag2=0
+                #time.sleep(3)
+            else:
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID5, AX_GOAL_POSITION, DXL_MAXIMUM_POSITION_VALUE)
+                flag2 = 1
+                #time.sleep(3)
 
 
 
@@ -193,11 +219,14 @@ if __name__ == "__main__":
 
     dx = DXL()
 
+
+
     try:
         while True:
             #　カメラの読み込み
             #ret, frame = cap.read()
             #img = frame
+
             _, img = cap.read()
 
             size = (img.shape[1]//2, img.shape[0]//2)
@@ -222,24 +251,58 @@ if __name__ == "__main__":
             cv2.imshow("Frame", img)
             cv2.imshow("Mask", mask)
 
+            device_name = '/dev/tty.usbmodem143301'
+            BaudRate = 115200
+            ser = serial.Serial(port=device_name,
+                                baudrate=BaudRate,
+                                bytesize=serial.EIGHTBITS,
+                                parity=serial.PARITY_NONE
+                                )
+
+            DATA_SIZE = 30
+            disnum =0
+
+            raw_value = ser.readline(DATA_SIZE)  #行末記号 '\n' まで読み込む ただしDATA_SIZEビットまで
+            str_value = raw_value.decode('utf-8')
+            disnum=int(re.sub(r'\D', '', str_value))
+
             if 0<abs((img.shape[1]//2)-(center_x))<50:
                 flag =1
+                dx.moveDXL()
             if ((img.shape[1]//2)-(center_x))<-50:
                 flag =2
+                dx.moveDXL()
             if ((img.shape[1]//2)-(center_x))>50:
                 flag =3
-            dx.moveDXL()
+                dx.moveDXL()
 
-            print(flag)
-            print (img.shape[1]//2)
-            print (center_x)
+            #dx.moveDXL()
+
+
+
+
+            if disnum>400:
+                flag2 =1
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 0)
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 0)
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 1024)
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 1024)
+                time.sleep(1)
+                dx.moveDXLARM()
+                time.sleep(2)
+                flag=4
+                dx.moveDXL()
+                break
+            else :
+                flag2 =0
+            print('disnum:',disnum)
+            print('flag:',flag,'flag2:',flag2)
+
+            #print (img.shape[1]//2)
+            #print (center_x)
             #cv2.imshow('Camera',img)
             if cv2.waitKey(1) & 0xff == 27:
                 break
-
-
-
-
 
 
 ##############################################################################
