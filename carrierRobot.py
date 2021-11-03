@@ -142,7 +142,7 @@ class DXL():
                 dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 1223)
                 #dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID5, AX_GOAL_POSITION, DXL_MINIMUM_POSITION_VALUE)
 
-                time.sleep(1)
+                time.sleep(0.5)
 
                 dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 0)
                 dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 0)
@@ -160,7 +160,7 @@ class DXL():
                 dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 200)
                 #flag=2
 
-                time.sleep(1)
+                time.sleep(0.5)
 
                 dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 0)
                 dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 0)
@@ -175,7 +175,7 @@ class DXL():
                 dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 1223)
                 dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 1223)
 
-                time.sleep(1)
+                time.sleep(0.5)
 
                 dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 1024)
                 dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 1024)
@@ -222,11 +222,6 @@ if __name__ == "__main__":
             cv2.imshow("Frame", img)
             cv2.imshow("Mask", mask)
 
-            # dynamixelを動かすメソッド
-            print(flag)
-            print (img.shape[1]//2)
-            print (center_x)
-            print (abs((img.shape[1]//2)-(center_x)))
             if 0<abs((img.shape[1]//2)-(center_x))<50:
                 flag =1
             if ((img.shape[1]//2)-(center_x))<-50:
@@ -234,6 +229,13 @@ if __name__ == "__main__":
             if ((img.shape[1]//2)-(center_x))>50:
                 flag =3
             dx.moveDXL()
+
+            print(flag)
+            print (img.shape[1]//2)
+            print (center_x)
+            #cv2.imshow('Camera',img)
+            if cv2.waitKey(1) & 0xff == 27:
+                break
 
 
 
