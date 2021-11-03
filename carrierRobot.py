@@ -60,12 +60,12 @@ def red_detect(img):
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
     # 赤色のHSVの値域1
-    hsv_min = np.array([0,127,0])
-    hsv_max = np.array([30,255,255])
+    hsv_min = np.array([0,64,0])
+    hsv_max = np.array([10,255,255])
     mask1 = cv2.inRange(hsv, hsv_min, hsv_max)
 
     # 赤色のHSVの値域2
-    hsv_min = np.array([150,127,0])
+    hsv_min = np.array([170,64,0])
     hsv_max = np.array([179,255,255])
     mask2 = cv2.inRange(hsv, hsv_min, hsv_max)
 
@@ -281,7 +281,7 @@ if __name__ == "__main__":
 
 
 
-            if disnum>200:
+            if disnum>150:
                 flag2 =1
                 dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 0)
                 dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 0)
