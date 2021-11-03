@@ -28,7 +28,7 @@ DEVICENAME                  = "/dev/tty.usbserial-AL03ERS9"                # Che
 
 TORQUE_ENABLE               = 1                             # Value for enabling the torque
 TORQUE_DISABLE              = 0                             # Value for disabling the torque
-DXL_MINIMUM_POSITION_VALUE  = 819                       # Dynamixel will rotate between this value
+DXL_MINIMUM_POSITION_VALUE  = 0                       # Dynamixel will rotate between this value
 DXL_MAXIMUM_POSITION_VALUE  = 1023
 
                        # and this value (note that the Dynamixel would not move when the position value is out of movable range. Check e-manual about the range of the Dynamixel you use.)
@@ -38,7 +38,7 @@ ESC_ASCII_VALUE             = 0x1b
 COMM_SUCCESS                = 0                             # Communication Success result value
 COMM_TX_FAIL                = -1001                         # Communication Tx Failed
 
-flag = 0
+flag = 1
 
 
 # Initialize PortHandler Structs
@@ -134,95 +134,55 @@ class DXL():
         #dxl_moving_state, dxl_comm_result, dxl_error = packetHandler.read1ByteTxRx(portHandler, DXL_ID5, AX_MOVING)
         # Write goal position
         if dxl_moving_state == 0:
-            if cv2.waitKey(0) & 0xFF == ord('k'):
-                if (img.shape[1]//2==center_x):
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 200)
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 200)
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 1223)
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 1223)
+
+            if flag == 1:
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 200)
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 200)
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 1223)
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 1223)
                 #dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID5, AX_GOAL_POSITION, DXL_MINIMUM_POSITION_VALUE)
-                #flag=0
-                #ストップ
-                    if cv2.waitKey(0) & 0xFF == ord('1'):
-                        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 0)
-                        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 0)
-                        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 1024)
-                        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 1024)
-                        flag=0
-                #右回り
-                elif (img.shape[1]//2<center_x):
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 200)
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 200)
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 200)
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 200)
-                    #flag=2
 
-                    if 0<abs(img.shape[1]//2-center_x)<20:
-                        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 0)
-                        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 0)
-                        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 1024)
-                        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 1024)
-                        flag=0
+                time.sleep(1)
 
-                    if cv2.waitKey(0) & 0xFF == ord('1'):
-                        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 0)
-                        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 0)
-                        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 1024)
-                        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 1024)
-                        flag=0
-              #左回り
-                elif (img.shape[1]//2>center_x):
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 1223)
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 1223)
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 1223)
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 1223)
-                    #123flag=3
-
-                    if 0<abs(img.shape[1]//2-center_x)<50:
-                        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 0)
-                        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 0)
-                        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 1024)
-                        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 1024)
-                        flag=0
-
-                    if cv2.waitKey(0) & 0xFF == ord('1'):
-                        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 0)
-                        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 0)
-                        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 1024)
-                        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 1024)
-                        flag=0
-            elif flag == 0:
-                print("a");
                 dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 0)
                 dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 0)
                 dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 1024)
                 dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 1024)
-                #dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID5, AX_GOAL_POSITION, DXL_MAXIMUM_POSITION_VALUE)
-                #flag = 1
 
-                if cv2.waitKey(0) & 0xFF == ord('6'):
-                    flag=1
 
-    def moveDXLARM(self):
-        global flag
-        # Read moving state
-        dxl_moving_state, dxl_comm_result, dxl_error = packetHandler.read1ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED)
-        dxl_moving_state, dxl_comm_result, dxl_error = packetHandler.read1ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED)
-        dxl_moving_state, dxl_comm_result, dxl_error = packetHandler.read1ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED)
-        dxl_moving_state, dxl_comm_result, dxl_error = packetHandler.read1ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED)
-        dxl_moving_state, dxl_comm_result, dxl_error = packetHandler.read1ByteTxRx(portHandler, DXL_ID5, AX_MOVING)
-        # Write goal position
-        if dxl_moving_state == 0:
-            if flag == 1:
-                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID5, AX_GOAL_POSITION, DXL_MINIMUM_POSITION_VALUE)
-                flag=0
-                time.sleep(3)
-            else:
-                print("a");
 
-                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID5, AX_GOAL_POSITION, DXL_MAXIMUM_POSITION_VALUE)
-                flag = 1
-                time.sleep(3)
+                #右回り
+            elif flag ==2:
+
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 200)
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 200)
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 200)
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 200)
+                #flag=2
+
+                time.sleep(1)
+
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 0)
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 0)
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 0)
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 0)
+
+
+              #左回り
+            elif flag ==3:
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 1223)
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 1223)
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 1223)
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 1223)
+
+                time.sleep(1)
+
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 1024)
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 1024)
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 1024)
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 1024)
+
+
 
 
 
@@ -234,17 +194,50 @@ if __name__ == "__main__":
     dx = DXL()
 
     try:
-         while True:
-             #　カメラの読み込み
-             #ret, frame = cap.read()
-             #img = frame
-             #print("press ESC to quit!")
-             #cv2.namedWindow('Camera', cv2.WINDOW_AUTOSIZE)
-             #cv2.imshow('Camera',img)
-             #if cv2.waitKey(1) & 0xff == 27:
-                 #break
+        while True:
+            #　カメラの読み込み
+            #ret, frame = cap.read()
+            #img = frame
+            _, img = cap.read()
 
-            dx.moveDXLARM()# dynamixelを動かすメソッド
+            size = (img.shape[1]//2, img.shape[0]//2)
+            img = cv2.resize(img, size)
+
+            #print("press ESC to quit!")
+            #cv2.namedWindow('Camera', cv2.WINDOW_AUTOSIZE)
+            mask = red_detect(img)
+
+                 # マスク画像をブロブ解析（面積最大のブロブ情報を取得）
+            target = analysis_blob(mask)
+
+            # 面積最大ブロブの中心座標を取得
+            center_x = int(target["center"][0])
+            center_y = int(target["center"][1])
+
+            # フレームに面積最大ブロブの中心周囲を円で描く
+            cv2.circle(img, (center_x, center_y), 30, (0, 200, 0),
+                       thickness=3, lineType=cv2.LINE_AA)
+
+            # 結果表示
+            cv2.imshow("Frame", img)
+            cv2.imshow("Mask", mask)
+
+            # dynamixelを動かすメソッド
+            print(flag)
+            print (img.shape[1]//2)
+            print (center_x)
+            print (abs((img.shape[1]//2)-(center_x)))
+            if 0<abs((img.shape[1]//2)-(center_x))<50:
+                flag =1
+            if ((img.shape[1]//2)-(center_x))<-50:
+                flag =2
+            if ((img.shape[1]//2)-(center_x))>50:
+                flag =3
+            dx.moveDXL()
+
+
+
+
 
 
 ##############################################################################
