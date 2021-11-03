@@ -138,29 +138,49 @@ class DXL():
                 dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 200)
                 dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 1223)
                 dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 1223)
+
+                if cv2.waitKey(0) & 0xFF == ord('0'):
+                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 200)
+                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 200)
+                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 1223)
+                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 1223)
                 #dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID5, AX_GOAL_POSITION, DXL_MINIMUM_POSITION_VALUE)
                 #flag=0
                 #ストップ
-                if cv2.waitKey(0) & 0xFF == ord('q'):
+                elif cv2.waitKey(0) & 0xFF == ord('1'):
                     dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 0)
                     dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 0)
                     dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 1024)
                     dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 1024)
                     flag=0
                 #右回り
-                if cv2.waitKey(0) & 0xFF == ord('r'):
+                elif cv2.waitKey(0) & 0xFF == ord('2'):
+                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 200)
+                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 200)
+                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 200)
+                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 200)
+                    #flag=2
+
+                    if cv2.waitKey(0) & 0xFF == ord('1'):
+                        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 0)
+                        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 0)
+                        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 1024)
+                        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 1024)
+                        flag=0
+              #左回り
+                elif cv2.waitKey(0) & 0xFF == ord('3'):
                     dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 1223)
                     dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 1223)
                     dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 1223)
                     dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 1223)
-                    flag=2
-              #左回り
-                if cv2.waitKey(0) & 0xFF == ord('l'):
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 0)
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 0)
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 0)
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 0)
-                    flag=3
+                    #123flag=3
+
+                    if cv2.waitKey(0) & 0xFF == ord('1'):
+                        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 0)
+                        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 0)
+                        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 1024)
+                        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 1024)
+                        flag=0
             elif flag == 0:
                 print("a");
                 dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 0)
@@ -169,45 +189,9 @@ class DXL():
                 dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 1024)
                 #dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID5, AX_GOAL_POSITION, DXL_MAXIMUM_POSITION_VALUE)
                 #flag = 1
-            elif flag == 2:
-                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 1223)
-                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 1223)
-                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 1223)
-                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 1223)
 
-                if cv2.waitKey(0) & 0xFF == ord('q'):
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 1024)
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 1024)
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 1024)
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 1024)
-                    flag=0
-                #左回り
-                if cv2.waitKey(0) & 0xFF == ord('l'):
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 200)
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 200)
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 200)
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 200)
-                    flag=3
-
-            elif flag == 3:
-                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 200)
-                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 200)
-                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 200)
-                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 200)
-
-                if cv2.waitKey(0) & 0xFF == ord('q'):
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 0)
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 0)
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 0)
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 0)
-                    flag=0
-                #右回り
-                if cv2.waitKey(0) & 0xFF == ord('r'):
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 1223)
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 1223)
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 1223)
-                    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 1223)
-                    flag=2
+                if cv2.waitKey(0) & 0xFF == ord('6'):
+                    flag=1
 
 
 
