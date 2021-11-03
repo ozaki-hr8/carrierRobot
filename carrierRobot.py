@@ -185,6 +185,12 @@ class DXL():
                 dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 1024)
                 dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 1024)
 
+            elif flag ==4:
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 1223)
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 1223)
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 200)
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 200)
+
     def moveDXLARM(self):
         global flag2
         # Read moving state
@@ -198,13 +204,11 @@ class DXL():
             if flag2 == 1:
                 dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID5, AX_GOAL_POSITION, DXL_MINIMUM_POSITION_VALUE)
                 flag2=0
-                time.sleep(3)
+                #time.sleep(3)
             else:
-                print("a");
-
                 dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID5, AX_GOAL_POSITION, DXL_MAXIMUM_POSITION_VALUE)
                 flag2 = 1
-                time.sleep(3)
+                #time.sleep(3)
 
 
 
@@ -214,33 +218,15 @@ class DXL():
 if __name__ == "__main__":
 
     dx = DXL()
-    device_name = '/dev/tty.usbmodem143301'
-    BaudRate = 115200
-    ser = serial.Serial(port=device_name,
-                        baudrate=BaudRate,
-                        bytesize=serial.EIGHTBITS,
-                        parity=serial.PARITY_NONE
-                        )
-
-    # マイコンによってまちまちです。以下のフォーマットだとしたら
-    # x x x x x x CR LF
-    DATA_SIZE = 30
-    disnum =0
-
-    while True:
-        raw_value = ser.readline(DATA_SIZE)  #行末記号 '\n' まで読み込む ただしDATA_SIZEビットまで
-        str_value = raw_value.decode('utf-8')
-        disnum=int(re.sub(r'\D', '', str_value))
-        print(disnum)
 
 
-    """
+
     try:
         while True:
             #　カメラの読み込み
             #ret, frame = cap.read()
             #img = frame
-        　
+
             _, img = cap.read()
 
             size = (img.shape[1]//2, img.shape[0]//2)
@@ -261,38 +247,68 @@ if __name__ == "__main__":
             cv2.circle(img, (center_x, center_y), 30, (0, 200, 0),
                        thickness=3, lineType=cv2.LINE_AA)
 
+            """
             # 結果表示
             cv2.imshow("Frame", img)
             cv2.imshow("Mask", mask)
+            """
+            device_name = '/dev/tty.usbmodem143301'
+            BaudRate = 115200
+            ser = serial.Serial(port=device_name,
+                                baudrate=BaudRate,
+                                bytesize=serial.EIGHTBITS,
+                                parity=serial.PARITY_NONE
+                                )
 
-                if 0<abs((img.shape[1]//2)-(center_x))<50:
-                    flag =1
-                if ((img.shape[1]//2)-(center_x))<-50:
-                    flag =2
-                if ((img.shape[1]//2)-(center_x))>50:
-                    flag =3
+            DATA_SIZE = 30
+            disnum =0
+
+            raw_value = ser.readline(DATA_SIZE)  #行末記号 '\n' まで読み込む ただしDATA_SIZEビットまで
+            str_value = raw_value.decode('utf-8')
+            disnum=int(re.sub(r'\D', '', str_value))
+            print('disnum:',disnum)
+
+            if 0<abs((img.shape[1]//2)-(center_x))<50:
+                flag =1
+                dx.moveDXL()
+            if ((img.shape[1]//2)-(center_x))<-50:
+                flag =2
+                dx.moveDXL()
+            if ((img.shape[1]//2)-(center_x))>50:
+                flag =3
+                dx.moveDXL()
 
 
-            dx.moveDXL()
 
-            print(flag)
-            print (img.shape[1]//2)
-            print (center_x)
+
+            if disnum>200:
+                flag2 =1
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, AX_MOVING_SPEED, 0)
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID2, AX_MOVING_SPEED, 0)
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID3, AX_MOVING_SPEED, 1024)
+                dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID4, AX_MOVING_SPEED, 1024)
+                time.sleep(1)
+                dx.moveDXLARM()
+                time.sleep(2)
+                flag=4
+                dx.moveDXL()
+                break
+            else :
+                flag2 =0
+
+            print('flag:',flag,'flag2:',flag2)
+
+            #print (img.shape[1]//2)
+            #print (center_x)
             #cv2.imshow('Camera',img)
             if cv2.waitKey(1) & 0xff == 27:
                 break
 
-            """
-
-
-
-
 
 ##############################################################################
-    """
+
     finally:
         # Close port
         cap.release()
         cv2.destroyAllWindows()
         portHandler.closePort()
-        """
