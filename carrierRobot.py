@@ -209,6 +209,9 @@ if __name__ == "__main__":
             #img = frame
             _, img = cap.read()
 
+            size = (img.shape[1]//2, img.shape[0]//2)
+            img = cv2.resize(img, size)
+
             #print("press ESC to quit!")
             #cv2.namedWindow('Camera', cv2.WINDOW_AUTOSIZE)
             mask = red_detect(img)
@@ -230,6 +233,7 @@ if __name__ == "__main__":
 
             dx.moveDXL()# dynamixelを動かすメソッド
             print(flag)
+            print (img.shape)
             #cv2.imshow('Camera',img)
             if cv2.waitKey(1) & 0xff == 27:
                 flag=0
